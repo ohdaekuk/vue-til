@@ -13,12 +13,13 @@
 				</div>
 				<div>
 					<label for="password">pw:</label>
-					<input id="password" type="text" v-model="password" />
+					<input id="password" type="pqssword" v-model="password" />
 				</div>
 				<button
 					:disabled="!isUsernameValid || !password"
 					type="submit"
 					class="btn"
+					:class="!isUsernameValid || !password ? 'disabled' : null"
 				>
 					로그인
 				</button>
@@ -29,7 +30,6 @@
 </template>
 
 <script>
-import { loginUser } from "@/api/index";
 import { validateEmail } from "@/utils/validation";
 
 export default {
@@ -55,15 +55,14 @@ export default {
 					username: this.username,
 					password: this.password,
 				};
-				const { data } = await loginUser(userData);
-				console.log(data.user.username);
-				this.logMessage = `${data.user.username} 님 환영합니다`;
-				// this.initForm();
+
+				await this.$store.dispatch("LOGIN", userData);
+
+				this.$router.push("/main");
 			} catch (error) {
 				// 에러 핸들링할 코드
 				console.log(error.response.data);
 				this.logMessage = error.response.data;
-				// this.initForm();
 			} finally {
 				this.initForm();
 			}
